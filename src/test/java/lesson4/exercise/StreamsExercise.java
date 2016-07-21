@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
@@ -60,8 +61,8 @@ public class StreamsExercise {
         int maxLength = 10;
         final int length = ThreadLocalRandom.current().nextInt(maxLength + 1);
 
-        return IntStream.range(0, length)
-                .mapToObj(i -> generateJobHistoryEntry())
+        return Stream.generate(StreamsExercise::generateJobHistoryEntry)
+                .limit(length - 1)
                 .collect(toList());
     }
 
@@ -107,6 +108,8 @@ public class StreamsExercise {
         List<Person> epamEmployees = null;// TODO all persons with first experience in epam
         throw new UnsupportedOperationException();
     }
+
+    // https://github.com/senia-psm/java-streams
 
     @Test
     public void indexByFirstEmployer() {

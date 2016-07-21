@@ -8,11 +8,12 @@ import org.junit.Test;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.*;
 import static org.junit.Assert.assertEquals;
 
 public class StreamsExample {
 
+    // https://github.com/senia-psm/java-streams
 
     @Test
     public void checkJohnsLastNames() {
@@ -24,15 +25,14 @@ public class StreamsExample {
                         .filter(e -> e.getFirstName().equals("John"))
                         .map(Person::getLastName)
                         .distinct()
-                        .collect(toList());
+                        .collect(Collectors.toList());
 
         assertEquals(Collections.singletonList("Galt"), johnsLastNames);
     }
 
     /**
      * Промежуточные операсции
-     *
-     * */
+     */
     @Test
     public void operations() {
         final List<Employee> employees = getEmployees();
@@ -84,6 +84,15 @@ public class StreamsExample {
         final List<Employee> employees = getEmployees();
 
         // Every aged (>= 25) John has an odd "dev" job experience
+
+        employees.stream()
+                .filter(e -> e.getPerson().getFirstName().equals("John"))
+                .filter(e -> e.getPerson().getAge() >= 25)
+                .flatMap(e -> e.getJobHistory().stream())
+                .filter(e -> e.getPosition().equals("dev"))
+                .distinct()
+                .sorted(Comparator.comparing(JobHistoryEntry::getDuration))
+                .forEachOrdered(System.out::println);
     }
 
     @Test
@@ -120,8 +129,13 @@ public class StreamsExample {
     }
 
     private Map<String, Set<Person>> getPositionIndex(List<Employee> employees) {
-        // TODO
-        throw new UnsupportedOperationException();
+        return employees.stream()
+                .flatMap(e ->
+                        e.getJobHistory().stream()
+                                .map(j -> new PersonPositionPair(e.getPerson(), j.getPosition()))
+                )
+                .collect(groupingBy(PersonPositionPair::getPosition,
+                        mapping(PersonPositionPair::getPerson, toSet())));
         //groupingBy, mapping
     }
 
@@ -144,7 +158,7 @@ public class StreamsExample {
                         .flatMap(
                                 employee -> employee.getJobHistory().stream()
                         )
-                        .collect(Collectors.mapping(JobHistoryEntry::getDuration, Collectors.reducing(0, (a, b) -> a + b)));
+                        .collect(mapping(JobHistoryEntry::getDuration, Collectors.reducing(0, (a, b) -> a + b)));
 
         System.out.println("sum: " + sumDuration);
     }
