@@ -59,7 +59,7 @@ public class StreamsExercise {
 
     private static List<JobHistoryEntry> generateJobHistory() {
         int maxLength = 10;
-        final int length = ThreadLocalRandom.current().nextInt(maxLength + 1);
+        final int length = ThreadLocalRandom.current().nextInt(maxLength) + 1;
 
         return Stream.generate(StreamsExercise::generateJobHistoryEntry)
                 .limit(length - 1)
