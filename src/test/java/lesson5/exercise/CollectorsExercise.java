@@ -73,6 +73,7 @@ public class CollectorsExercise {
     }
 
     // With the longest sum duration on this position
+    // { John Doe, [{dev, google, 4}, {dev, epam, 4}] } предпочтительнее, чем { A B, [{dev, google, 6}, {QA, epam, 100}]}
     private Map<String, Person> getCoolestByPosition2(List<Employee> employees) {
         // TODO
         throw new UnsupportedOperationException();
@@ -219,6 +220,7 @@ public class CollectorsExercise {
 
         // final Map<String, List<Value>> valuesMap1 = pairs.stream()...
 
+        // В каждом Map.Entry id ключа должно совпадать с keyId для каждого значения в списке
         // final Map<Key, List<Value>> keyValuesMap1 = valueMap1.entrySet().stream()...
 
         // В 1 проход в 2 Map с использованием MapPair и mapMerger
