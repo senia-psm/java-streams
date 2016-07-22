@@ -3,6 +3,7 @@ package data;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 public class JobHistoryEntry {
     private final int duration;
@@ -41,7 +42,7 @@ public class JobHistoryEntry {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
                 .append("duration", duration)
                 .append("position", position)
                 .append("employer", employer)
