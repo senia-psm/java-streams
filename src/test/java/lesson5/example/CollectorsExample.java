@@ -7,14 +7,12 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.StringJoiner;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.BiConsumer;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
@@ -35,7 +33,8 @@ public class CollectorsExample {
     public void incorrectReducePersonsToString() {
         final Stream<Person> personStream = getPersonStream();
 
-        final String result = personStream//.parallel()
+        // [a, b, c, d] -> [[a, b], [c, d]]
+        final String result = personStream.parallel()
                 // .reduce((a, b) -> ???) Optional<T> reduce(BinaryOperator<T> accumulator)
                 // .reduce(zeroPerson, (a, b) -> ???) T reduce(T identity, BinaryOperator<T> accumulator)
                 //     <U> U reduce(U identity,
@@ -54,7 +53,7 @@ public class CollectorsExample {
         final StringBuilder res = getPersonStream().parallel()
                 // unordered
                 .collect(
-                        () -> new StringBuilder(), // synchronization is in Stream
+                        StringBuilder::new, // synchronization is in Stream
                         (builder, person) -> builder.append("\n and ").append(person),
                         (builder1, builder2) -> builder1.append("\n and ").append(builder2)
                 );
@@ -105,8 +104,10 @@ public class CollectorsExample {
 
                             @Override
                             public Set<Characteristics> characteristics() {
-                                return Collections.emptySet();
-                                //return Collections.unmodifiableSet(EnumSet.of(Characteristics.CONCURRENT, Characteristics.UNORDERED));
+                                //return Collections.emptySet();
+                                return Collections.unmodifiableSet(EnumSet.of(
+                                        Characteristics.CONCURRENT/*,
+                                        Characteristics.UNORDERED*/));
                             }
                         }
                 );

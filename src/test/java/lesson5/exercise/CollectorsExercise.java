@@ -17,7 +17,6 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 
 public class CollectorsExercise {
 
@@ -28,16 +27,16 @@ public class CollectorsExercise {
         coolestByPosition.forEach((position, person) -> System.out.println(position + " -> " + person));
     }
 
-    private static class PersonPositionDuration {
-        private final Person person;
-        private final String position;
-        private final int duration;
+        private static class PersonPositionDuration {
+            private final Person person;
+            private final String position;
+            private final int duration;
 
-        public PersonPositionDuration(Person person, String position, int duration) {
-            this.person = person;
-            this.position = position;
-            this.duration = duration;
-        }
+            public PersonPositionDuration(Person person, String position, int duration) {
+                this.person = person;
+                this.position = position;
+                this.duration = duration;
+            }
 
         public Person getPerson() {
             return person;
@@ -61,6 +60,7 @@ public class CollectorsExercise {
 
         // Second option
         // Collectors.toMap
+        // iterate twice: stream...collect(...).stream()...
         // TODO
         throw new UnsupportedOperationException();
     }
@@ -167,20 +167,26 @@ public class CollectorsExercise {
     }
 
     private static class SubResult {
-        private final Map<Key, List<Value>> subresult;
+        private final Map<Key, List<Value>> subResult;
+        private final Map<String, List<Key>> knownKeys;
         private final Map<String, List<Value>> valuesWithoutKeys;
 
-        public SubResult(Map<Key, List<Value>> subresult, Map<String, List<Value>> valuesWithoutKeys) {
-            this.subresult = subresult;
+        public SubResult(Map<Key, List<Value>> subResult, Map<String, List<Key>> knownKeys, Map<String, List<Value>> valuesWithoutKeys) {
+            this.subResult = subResult;
+            this.knownKeys = knownKeys;
             this.valuesWithoutKeys = valuesWithoutKeys;
         }
 
-        public Map<Key, List<Value>> getSubresult() {
-            return subresult;
+        public Map<Key, List<Value>> getSubResult() {
+            return subResult;
         }
 
         public Map<String, List<Value>> getValuesWithoutKeys() {
             return valuesWithoutKeys;
+        }
+
+        public Map<String, List<Key>> getKnownKeys() {
+            return knownKeys;
         }
     }
 
@@ -202,10 +208,10 @@ public class CollectorsExercise {
         }
     }
 
-    private static <K, V, M extends Map<K,V>>
+    private static <K, V, M extends Map<K, V>>
     BinaryOperator<M> mapMerger(BinaryOperator<V> mergeFunction) {
         return (m1, m2) -> {
-            for (Map.Entry<K,V> e : m2.entrySet())
+            for (Map.Entry<K, V> e : m2.entrySet())
                 m1.merge(e.getKey(), e.getValue(), mergeFunction);
             return m1;
         };
@@ -281,7 +287,7 @@ public class CollectorsExercise {
 
                     @Override
                     public BinaryOperator<SubResult> combiner() {
-                        // TODO cross-check all entries of valuesWithoutKeys, then use mapMerger
+                        // TODO use mapMerger, then check all valuesWithoutKeys
                         throw new UnsupportedOperationException();
                     }
 
@@ -299,7 +305,7 @@ public class CollectorsExercise {
                     }
                 });
 
-        final Map<Key, List<Value>> keyValuesMap3 = res3.getSubresult();
+        final Map<Key, List<Value>> keyValuesMap3 = res3.getSubResult();
 
         // compare results
     }
