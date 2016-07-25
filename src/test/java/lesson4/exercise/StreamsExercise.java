@@ -5,15 +5,14 @@ import data.JobHistoryEntry;
 import data.Person;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
 
 public class StreamsExercise {
@@ -62,7 +61,7 @@ public class StreamsExercise {
         final int length = ThreadLocalRandom.current().nextInt(maxLength) + 1;
 
         return Stream.generate(StreamsExercise::generateJobHistoryEntry)
-                .limit(length - 1)
+                .limit(length)
                 .collect(toList());
     }
 
@@ -82,8 +81,8 @@ public class StreamsExercise {
 
         int expected = 0;
 
-        for (Employee e: employees) {
-            for (JobHistoryEntry j :      e.getJobHistory()) {
+        for (Employee e : employees) {
+            for (JobHistoryEntry j : e.getJobHistory()) {
                 if (j.getEmployer().equals("epam")) {
                     expected += j.getDuration();
                 }
@@ -111,9 +110,37 @@ public class StreamsExercise {
 
     // https://github.com/senia-psm/java-streams
 
+    private static class PersonEmployerPair {
+        private final Person person;
+        private final String employer;
+
+        public PersonEmployerPair(Person person, String employer) {
+            this.person = person;
+            this.employer = employer;
+        }
+
+        public Person getPerson() {
+            return person;
+        }
+
+        public String getEmployer() {
+            return employer;
+        }
+    }
+
     @Test
     public void indexByFirstEmployer() {
-        Map<String, List<Person>> employeesIndex = null;// TODO
+        Map<String, List<Person>> employeesIndex = getEmployees().stream()
+                .flatMap(
+                        e -> e.getJobHistory().stream()
+                                 .findFirst()
+                                 .map(JobHistoryEntry::getEmployer)
+                                 .map(empl -> new PersonEmployerPair(e.getPerson(), empl))
+                                 .map(Stream::of)
+                                 .orElseGet(Stream::empty)
+                )
+                .collect(groupingBy(PersonEmployerPair::getEmployer,
+                        mapping(PersonEmployerPair::getPerson, toList())));// TODO
         throw new UnsupportedOperationException();
     }
 

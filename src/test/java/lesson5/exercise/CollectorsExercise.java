@@ -27,16 +27,16 @@ public class CollectorsExercise {
         coolestByPosition.forEach((position, person) -> System.out.println(position + " -> " + person));
     }
 
-        private static class PersonPositionDuration {
-            private final Person person;
-            private final String position;
-            private final int duration;
+    private static class PersonPositionDuration {
+        private final Person person;
+        private final String position;
+        private final int duration;
 
-            public PersonPositionDuration(Person person, String position, int duration) {
-                this.person = person;
-                this.position = position;
-                this.duration = duration;
-            }
+        public PersonPositionDuration(Person person, String position, int duration) {
+            this.person = person;
+            this.position = position;
+            this.duration = duration;
+        }
 
         public Person getPerson() {
             return person;
@@ -100,7 +100,7 @@ public class CollectorsExercise {
         return array[ThreadLocalRandom.current().nextInt(array.length)];
     }
 
-    private static class Key {
+    public static class Key {
         private final String id;
 
         public Key(String id) {
@@ -128,7 +128,7 @@ public class CollectorsExercise {
         }
     }
 
-    private static class Value {
+    public static class Value {
         private final String keyId;
 
         public Value(String keyId) {
@@ -140,7 +140,7 @@ public class CollectorsExercise {
         }
     }
 
-    private static class Pair {
+    public static class Pair {
         private final Key key;
         private final Value value;
 
@@ -158,7 +158,7 @@ public class CollectorsExercise {
         }
     }
 
-    private static List<Pair> generatePairs(int idCount, int length) {
+    public static List<Pair> generatePairs(int idCount, int length) {
         final String[] ids = generateStringArray(idCount);
 
         return Stream.generate(() -> new Pair(new Key(pickString(ids)), new Value(pickString(ids))))
@@ -258,7 +258,6 @@ public class CollectorsExercise {
                     @Override
                     public Set<Characteristics> characteristics() {
                         return Collections.unmodifiableSet(EnumSet.of(
-                                Characteristics.CONCURRENT,
                                 Characteristics.UNORDERED,
                                 Characteristics.IDENTITY_FINISH));
                     }
@@ -293,15 +292,14 @@ public class CollectorsExercise {
 
                     @Override
                     public Function<SubResult, SubResult> finisher() {
-                        return Function.identity();
+                        // TODO use mapMerger, then check all valuesWithoutKeys
+                        throw new UnsupportedOperationException();
                     }
 
                     @Override
                     public Set<Characteristics> characteristics() {
                         return Collections.unmodifiableSet(EnumSet.of(
-                                Characteristics.CONCURRENT,
-                                Characteristics.UNORDERED,
-                                Characteristics.IDENTITY_FINISH));
+                                Characteristics.UNORDERED));
                     }
                 });
 
